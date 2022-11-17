@@ -110,11 +110,11 @@ The command for the training is as follows (see bash scripts and Python files fo
 arguments):
 
 ```bash
-. config/data_conf/base_model_conf_absa.ini  && model_name=uie-base-en dataset_name=absa/14lap bash scripts_exp/run_exp.bash
+. config/data_conf/base_model_conf_absa.ini  && model_name=luyaojie/uie-base-en dataset_name=absa/14lap bash scripts_exp/run_exp.bash
 ```
 
 - `config/data_conf/base_model_conf_absa.ini` refers to using the training settings in `base_model_conf_absa.ini` 
-- `model_name=uie-base-en` refers to using uie-base-en.
+- `model_name=luyaojie/uie-base-en` refers to using luyaojie/uie-base-en.
 - `dataset_name=absa/14lap` refers to the dataset path.
 
 Trained models are saved in the `output_dir` specified by `run_uie_finetune.bash`.

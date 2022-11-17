@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # -*- coding:utf-8 -*-
 export batch_size="16"
-export model_name=uie-base-en
-export data_name=absa/14lap
+export model_name="$model_name"
+export data_name="$dataset_name"
 export task_name="meta"
 export decoding_format='spotasoc'
 
