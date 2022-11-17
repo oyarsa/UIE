@@ -23,7 +23,7 @@ def processing_sentence(sentence):
 def main():
     raw_folder = "data/sincere"
     new_folder = "data/relation"
-    for dataset_name in ['ace05', 'conll04']:
+    for dataset_name in ['conll04']:
         dataset_file_name = os.path.join(raw_folder, dataset_name) + '.json'
 
         output_folder = os.path.join(new_folder, dataset_name)
