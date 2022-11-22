@@ -1,0 +1,14 @@
+name: fgcr
+path: data/relation/fgcr
+data_class: Spannet
+split:
+  train: train.jsonlines
+  val: dev.jsonlines
+  test: test.jsonlines
+language: en
+
+mapper:
+  cause: cause
+  enable: enable
+  prevent: prevent
+  effect: effect
