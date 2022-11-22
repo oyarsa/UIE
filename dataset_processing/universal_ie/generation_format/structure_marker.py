@@ -5,7 +5,16 @@
 
 class StructureMarker:
     def __init__(self) -> None:
-        pass
+        self.sent_start = ''
+        self.sent_end = ''
+        self.record_start = ''
+        self.record_end = ''
+        self.span_start = ''
+        self.span_end = ''
+        self.sep_marker = ''
+        self.source_span_start = ''
+        self.source_span_end = ''
+        self.target_span_start = ''
 
 
 class BaseStructureMarker(StructureMarker):

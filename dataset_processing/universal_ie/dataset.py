@@ -3,12 +3,21 @@
 from universal_ie.utils import label_format
 import yaml
 import os
-from typing import Dict
+from typing import Any, Dict, Optional
 import universal_ie.task_format as task_format
 
 
 class Dataset:
-    def __init__(self, name: str, path: str, data_class: task_format.TaskFormat, split_dict: Dict, language: str, mapper: Dict, other: Dict = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        path: str,
+        data_class: task_format.TaskFormat,
+        split_dict: Dict,
+        language: str,
+        mapper: Optional[Dict],
+        other: Dict[str, Any],
+    ) -> None:
         self.name = name
         self.path = path
         self.data_class = data_class
@@ -30,8 +39,8 @@ class Dataset:
     @staticmethod
     def load_yaml_file(yaml_file):
         dataset_config = yaml.load(open(yaml_file), Loader=yaml.FullLoader)
-        if 'mapper' in dataset_config:
-            mapper = dataset_config['mapper']
+        if "mapper" in dataset_config:
+            mapper = dataset_config["mapper"]
             for key in mapper:
                 mapper[key] = label_format(mapper[key])
         else:
@@ -39,11 +48,13 @@ class Dataset:
             mapper = None
 
         return Dataset(
-            name=dataset_config['name'],  # 数据集名字 Name of Dataset
-            path=dataset_config['path'],  # 数据集路径 Path of Dataset
-            data_class=getattr(task_format, dataset_config['data_class']),  # 数据集对应的 Task Format 名字 Raw data loader
-            split_dict=dataset_config['split'],   # 数据集不同划分文件地址 Data Split Path
-            language=dataset_config['language'],  # 数据集语言 Dataset Language
+            name=dataset_config["name"],  # 数据集名字 Name of Dataset
+            path=dataset_config["path"],  # 数据集路径 Path of Dataset
+            data_class=getattr(
+                task_format, dataset_config["data_class"]
+            ),  # 数据集对应的 Task Format 名字 Raw data loader
+            split_dict=dataset_config["split"],  # 数据集不同划分文件地址 Data Split Path
+            language=dataset_config["language"],  # 数据集语言 Dataset Language
             mapper=mapper,
-            other=dataset_config.get('other', {}),
+            other=dataset_config.get("other", {}),
         )

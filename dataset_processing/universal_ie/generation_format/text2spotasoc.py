@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 from collections import defaultdict
-from typing import List, Dict
+from typing import List, Dict, Optional
 from universal_ie.utils import tokens_to_str
-from universal_ie.generation_format.generation_format import GenerationFormat, StructureMarker
+from universal_ie.generation_format.generation_format import (
+    GenerationFormat,
+    StructureMarker,
+)
 from universal_ie.ie_format import Entity, Event, Label, Relation, Span
 
 
@@ -11,11 +14,11 @@ def convert_spot_asoc(spot_asoc_instance, structure_maker):
     spot_instance_str_rep_list = list()
     for spot in spot_asoc_instance:
         spot_str_rep = [
-            spot['label'],
+            spot["label"],
             structure_maker.target_span_start,
-            spot['span'],
+            spot["span"],
         ]
-        for asoc_label, asoc_span in spot.get('asoc', list()):
+        for asoc_label, asoc_span in spot.get("asoc", list()):
             asoc_str_rep = [
                 structure_maker.span_start,
                 asoc_label,
@@ -23,30 +26,41 @@ def convert_spot_asoc(spot_asoc_instance, structure_maker):
                 asoc_span,
                 structure_maker.span_end,
             ]
-            spot_str_rep += [' '.join(asoc_str_rep)]
-        spot_instance_str_rep_list += [' '.join([
-            structure_maker.record_start,
-            ' '.join(spot_str_rep),
-            structure_maker.record_end,
-        ])]
-    target_text = ' '.join([
-        structure_maker.sent_start,
-        ' '.join(spot_instance_str_rep_list),
-        structure_maker.sent_end,
-    ])
+            spot_str_rep += [" ".join(asoc_str_rep)]
+        spot_instance_str_rep_list += [
+            " ".join(
+                [
+                    structure_maker.record_start,
+                    " ".join(spot_str_rep),
+                    structure_maker.record_end,
+                ]
+            )
+        ]
+    target_text = " ".join(
+        [
+            structure_maker.sent_start,
+            " ".join(spot_instance_str_rep_list),
+            structure_maker.sent_end,
+        ]
+    )
     return target_text
 
 
 class Text2SpotAsoc(GenerationFormat):
-    def __init__(self, structure_maker: StructureMarker, label_mapper: Dict = None, language: str = 'en') -> None:
+    def __init__(
+        self,
+        structure_maker: StructureMarker,
+        label_mapper: Optional[Dict] = None,
+        language: str = "en",
+    ) -> None:
         super().__init__(
             structure_maker=structure_maker,
             label_mapper=label_mapper,
-            language=language
+            language=language,
         )
 
     def annotate_entities(self, tokens: List[str], entities: List[Entity]):
-        """ Convert Entities
+        """Convert Entities
 
         Args:
             tokens (List[str]): ['Trump', 'visits', 'China', '.']
@@ -71,11 +85,13 @@ class Text2SpotAsoc(GenerationFormat):
             [type]:
                 ['(', 'Trump', ')', 'visits', 'China', '.']
         """
-        return tokens[:span.indexes[0]] \
-            + [self.structure_maker.source_span_start] \
-            + tokens[span.indexes[0]:span.indexes[-1] + 1] \
-            + [self.structure_maker.source_span_end] \
-            + tokens[span.indexes[-1] + 1:]
+        return (
+            tokens[: span.indexes[0]]
+            + [self.structure_maker.source_span_start]
+            + tokens[span.indexes[0] : span.indexes[-1] + 1]
+            + [self.structure_maker.source_span_end]
+            + tokens[span.indexes[-1] + 1 :]
+        )
 
     def annotate_given_entities(self, tokens: List[str], entities):
         """
@@ -114,6 +130,9 @@ class Text2SpotAsoc(GenerationFormat):
             source_text = tokens_to_str(marked_tokens, language=self.language)
             _, target_text = self.annonote_graph(tokens=tokens, entities=[entities])[:2]
 
+        else:
+            raise ValueError("Invalid entities")
+
         return source_text, target_text
 
     def annotate_events(self, tokens: List[str], events: List[Event]):
@@ -144,9 +163,9 @@ class Text2SpotAsoc(GenerationFormat):
         _, target_text = self.annonote_graph(tokens=tokens, events=[event])[:2]
         return source_text, target_text
 
-    def annotate_relation_extraction(self,
-                                     tokens: List[str],
-                                     relations: List[Relation]):
+    def annotate_relation_extraction(
+        self, tokens: List[str], relations: List[Relation]
+    ):
         """
         :param tokens:
             ['Trump', 'visits', 'China', '.']
@@ -158,10 +177,9 @@ class Text2SpotAsoc(GenerationFormat):
         """
         return self.annonote_graph(tokens=tokens, relations=relations)[:2]
 
-    def annotate_entities_and_relation_extraction(self,
-                                                  tokens: List[str],
-                                                  entities: List[Entity],
-                                                  relations: List[Relation]):
+    def annotate_entities_and_relation_extraction(
+        self, tokens: List[str], entities: List[Entity], relations: List[Relation]
+    ):
         """
         :param tokens:
             ['Trump', 'visits', 'China', '.']
@@ -171,13 +189,17 @@ class Text2SpotAsoc(GenerationFormat):
             source (str): Trump visits China.
             target (str): { [ Person : Trump ( Visit : China ) ] [ Geo-political : China ] }
         """
-        return self.annonote_graph(tokens=tokens, entities=entities, relations=relations)[:2]
+        return self.annonote_graph(
+            tokens=tokens, entities=entities, relations=relations
+        )[:2]
 
-    def annonote_graph(self,
-                       tokens: List[str],
-                       entities: List[Entity] = [],
-                       relations: List[Relation] = [],
-                       events: List[Event] = []):
+    def annonote_graph(
+        self,
+        tokens: List[str],
+        entities: List[Entity] = [],
+        relations: List[Relation] = [],
+        events: List[Event] = [],
+    ):
         """Convert Entity Relation Event to Spot-Assocation Graph
 
         Args:
@@ -198,7 +220,6 @@ class Text2SpotAsoc(GenerationFormat):
         """
         spot_dict = dict()
         asoc_dict = defaultdict(list)
-        spot_str_rep_list = list()
 
         def add_spot(spot):
             spot_key = (tuple(spot.span.indexes), self.get_label_str(spot.label))
@@ -211,7 +232,9 @@ class Text2SpotAsoc(GenerationFormat):
             spot_key = (tuple(spot.span.indexes), self.get_label_str(spot.label))
             asoc_dict[spot_key] += [(tail.span.indexes, tail, self.get_label_str(asoc))]
 
-            self.record_role_map[self.get_label_str(spot.label)].add(self.get_label_str(asoc))
+            self.record_role_map[self.get_label_str(spot.label)].add(
+                self.get_label_str(asoc)
+            )
 
         for entity in entities:
             add_spot(spot=entity)
@@ -227,21 +250,21 @@ class Text2SpotAsoc(GenerationFormat):
 
         spot_asoc_instance = list()
         for spot_key in sorted(spot_dict.keys()):
-            offset, label = spot_key
+            _, label = spot_key
 
             if spot_dict[spot_key].span.is_empty_span():
                 continue
 
-            spot_instance = {'span': spot_dict[spot_key].span.text,
-                             'label': label,
-                             'asoc': list(),
-                             }
-            for _, tail, asoc in sorted(asoc_dict.get(spot_key, [])):
-
+            spot_instance = {
+                "span": spot_dict[spot_key].span.text,
+                "label": label,
+                "asoc": list(),
+            }
+            for _, tail, asoc in sorted(asoc_dict[spot_key]):
                 if tail.span.is_empty_span():
                     continue
+                spot_instance["asoc"] += [(asoc, tail.span.text)]
 
-                spot_instance['asoc'] += [(asoc, tail.span.text)]
             spot_asoc_instance += [spot_instance]
 
         target_text = convert_spot_asoc(

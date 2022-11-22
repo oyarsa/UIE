@@ -3,21 +3,21 @@
 from collections import Counter
 import os
 import json
-from typing import Dict, List
+from typing import Dict, List, Optional, Type
 from tqdm import tqdm
-from universal_ie.generation_format.generation_format import GenerationFormat
 from universal_ie.generation_format import generation_format_dict
 from universal_ie.generation_format.structure_marker import BaseStructureMarker
 from universal_ie.dataset import Dataset
+from universal_ie.generation_format.text2spotasoc import Text2SpotAsoc
 from universal_ie.ie_format import Sentence
 
 
 def convert_graph(
-    generation_class: GenerationFormat,
+    generation_class: Type[Text2SpotAsoc],
     output_folder: str,
     datasets: Dict[str, List[Sentence]],
     language: str = "en",
-    label_mapper: Dict = None,
+    label_mapper: Optional[Dict] = None,
 ):
     convertor = generation_class(
         structure_maker=BaseStructureMarker(),
@@ -44,8 +44,7 @@ def convert_graph(
                     relations=instance.relations,
                     events=instance.events,
                 )
-                src, tgt, spot_labels, asoc_labels = converted_graph[:4]
-                spot_asoc = converted_graph[4]
+                src, tgt, spot_labels, asoc_labels, spot_asoc = converted_graph
 
                 schema_counter["entity"] += instance.entities
                 schema_counter["relation"] += instance.relations

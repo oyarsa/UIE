@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 from collections import Counter
 import json
-from typing import List, Dict
+from typing import Any, List, Dict
 from universal_ie.task_format.task_format import TaskFormat
 from universal_ie.utils import change_ptb_token_back, tokens_to_str
 from universal_ie.ie_format import Entity, Label, Relation, Sentence, Span
@@ -27,11 +27,9 @@ class Spannet(TaskFormat):
         ]
     }
     """
-    def __init__(self, instance_json: Dict, language='en') -> None:
-        super().__init__(
-            language=language
-        )
-        self.tokens = change_ptb_token_back(instance_json['tokens'])
+    def __init__(self, instance_json: Dict[str, Any], language='en') -> None:
+        super().__init__(language=language)
+        self.tokens = [change_ptb_token_back(t) for t in instance_json['tokens']]
         self.span_list = instance_json.get('span_list', [])
         self.span_pair_list = instance_json.get('span_pair_list', [])
         self.instance_id = instance_json.get('id', None)
@@ -42,7 +40,7 @@ class Spannet(TaskFormat):
         for span_index, span in enumerate(self.span_list):
             tokens = self.tokens[span['start']: span['end'] + 1]
             indexes = list(range(span['start'], span['end'] + 1))
-            entities += [
+            entities.append(
                 Entity(
                     span=Span(
                         tokens=tokens,
@@ -53,9 +51,9 @@ class Spannet(TaskFormat):
                     label=Label(span['type']),
                     text_id=self.instance_id,
                     record_id=self.instance_id + "#%s" % span_index if self.instance_id else None)
-            ]
+            )
         for spanpair_index, span_pair in enumerate(self.span_pair_list):
-            relations += [
+            relations.append(
                 Relation(
                     arg1=entities[span_pair['head']],
                     arg2=entities[span_pair['tail']],
@@ -63,7 +61,7 @@ class Spannet(TaskFormat):
                     text_id=self.instance_id,
                     record_id=self.instance_id + "##%s" % spanpair_index if self.instance_id else None
                 )
-            ]
+            )
         return Sentence(tokens=self.tokens,
                         entities=entities,
                         relations=relations,

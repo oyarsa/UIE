@@ -47,7 +47,7 @@ def load_dict_ini_file(filename):
     return mapper
 
 
-def change_ptb_token_back(token):
+def change_ptb_token_back(token: str) -> str:
     """将 PTBTokenized 的 Token 转换会原始字符串
 
     Args:

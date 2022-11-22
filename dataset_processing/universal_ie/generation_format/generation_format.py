@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-from typing import List, Dict, Union
+from typing import Any, List, Dict, Optional, Union
 from collections import defaultdict
 from universal_ie.record_schema import RecordSchema
 from universal_ie.generation_format.structure_marker import StructureMarker
@@ -13,14 +13,14 @@ class GenerationFormat:
 
     def __init__(self,
                  structure_maker: StructureMarker,
-                 label_mapper: Dict = None,
+                 label_mapper: Optional[Dict] = None,
                  language: str = 'en') -> None:
         self.structure_maker = structure_maker
         self.language = language
         self.label_mapper = {} if label_mapper is None else label_mapper
 
         # 用于从数据中统计 Schema
-        self.record_role_map = defaultdict(set)
+        self.record_role_map: Dict[str, Any] = defaultdict(set)
 
     def get_label_str(self, label: Label):
         return self.label_mapper.get(label.__repr__(), label.__repr__())
@@ -75,7 +75,7 @@ class GenerationFormat:
         )
 
     def get_relation_schema(self, relations: List[Relation]):
-        record_role_map = defaultdict(set)
+        record_role_map: Dict[str, Any] = defaultdict(set)
         role_set = set()
 
         for relation in relations:
@@ -93,7 +93,7 @@ class GenerationFormat:
         )
 
     def get_event_schema(self, events: List[Event]):
-        record_role_map = defaultdict(set)
+        record_role_map: Dict[str, Any] = defaultdict(set)
         role_set = set()
 
         for event in events:
