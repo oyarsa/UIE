@@ -1,0 +1,3 @@
+["cause", "effect"]
+["prevent", "cause", "enable"]
+{"cause": ["cause", "prevent", "enable"], "effect": ["cause", "prevent", "enable"]}

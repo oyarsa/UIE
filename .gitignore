@@ -1,5 +1,4 @@
 # UIE
-/data
 /pretrain_data
 /output
 /hf_models
@@ -7,6 +6,14 @@
 /runs
 /models
 *.lock
+
+/data/*
+!/data/text2spotasoc/
+/data/text2spotasoc/*
+!/data/text2spotasoc/relation
+/data/text2spotasoc/relation/*
+!/data/text2spotasoc/relation/fgcr
+
 
 # mac
 .DS_Store
