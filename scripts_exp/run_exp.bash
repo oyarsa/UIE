@@ -27,7 +27,7 @@ for batch_size in "${BATCH_SIZE[@]}"; do
             echo "negative " ${negative}
 
             bash run_uie_finetune.bash -k ${run_time} \
-              -m hf_models/${model_name} \
+              -m ${model_name} \
               -d ${selected_gpus} \
               -i ${dataset_name} \
               --lr_scheduler linear \
