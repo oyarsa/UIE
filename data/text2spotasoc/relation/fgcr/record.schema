@@ -1,3 +1,3 @@
 ["cause", "effect"]
-["prevent", "cause", "enable"]
-{"cause": ["cause", "prevent", "enable"], "effect": ["cause", "prevent", "enable"]}
+["enable", "cause", "prevent"]
+{"cause": ["prevent", "enable", "cause"], "effect": ["prevent", "enable", "cause"]}
