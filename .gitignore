@@ -8,11 +8,12 @@
 *.lock
 
 /data/*
+
 !/data/text2spotasoc/
 /data/text2spotasoc/*
 !/data/text2spotasoc/relation
 /data/text2spotasoc/relation/*
-!/data/text2spotasoc/relation/fgcr
+!/data/text2spotasoc/relation/fgcr*
 
 
 # mac
